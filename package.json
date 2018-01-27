@@ -7,6 +7,7 @@
         "start": "node_modules/nodemon/bin/nodemon.js",
         "build": "",
         "unit-tests": "node_modules/mocha/bin/mocha -w unit-tests",
+        "e2e-tests": "node_modules/mocha/bin/mocha -w e2e",
         "lint": ""
     },
     "author": "Marco La Rosa",
