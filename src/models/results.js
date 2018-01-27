@@ -3,29 +3,27 @@ module.exports = function(sequelize, DataTypes) {
         'result',
         {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 primaryKey: true,
                 allowNull: false
             },
-            first_name: {
+            firstName: {
                 type: DataTypes.STRING
             },
-            last_name: {
+            lastName: {
                 type: DataTypes.STRING
             },
-            test_id: {
+            testId: {
+                type: DataTypes.STRING
+            },
+            summaryMarksAvailable: {
                 type: DataTypes.INTEGER
             },
-            summary_marks_available: {
-                type: DataTypes.INTEGER
-            },
-            summary_marks_obtained: {
+            summaryMarksObtained: {
                 type: DataTypes.INTEGER
             }
         },
-        {
-            underscored: true
-        }
+        {}
     );
     Result.associate = function(models) {};
     return Result;
