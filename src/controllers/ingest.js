@@ -3,6 +3,7 @@
 const convert = require('xml-js');
 const lodash = require('lodash');
 const changeCase = require('change-case');
+const models = require('src/models');
 
 module.exports = {
     processMarkedDataCtrl,
@@ -15,8 +16,35 @@ function processMarkedDataCtrl(xmlData) {
     const doc = convertToJS(xmlData);
     if (doc.elements) {
         let results = extractMcqTestResults(doc.elements);
-        return results;
+        return results.map(result => createOrUpdateResultRecord(result));
     }
+}
+
+function createOrUpdateResultRecord(newResult) {
+    return models.result
+        .findOrCreate({
+            where: {
+                id: newResult.studentNumber,
+                testId: newResult.testId
+            },
+            defaults: newResult
+        })
+        .then(oldResult => {
+            oldResult = oldResult[0];
+            let update = Object.assign({}, oldResult.get());
+            if (
+                oldResult.summaryMarksAvailable <
+                newResult.summaryMarksAvailable
+            ) {
+                update.summaryMarksAvailable = newResult.summaryMarksAvailable;
+            }
+            if (
+                oldResult.summaryMarksObtained < newResult.summaryMarksObtained
+            ) {
+                update.summaryMarksObtained = newResult.summaryMarksObtained;
+            }
+            return oldResult.update(update);
+        });
 }
 
 function convertToJS(xmlData) {
@@ -89,10 +117,8 @@ function extractMcqTestResult(mcqResult) {
     }
     function extractSummaryMarks(element) {
         return {
-            summaryMarks: {
-                obtained: parseInt(element.attributes.obtained),
-                available: parseInt(element.attributes.available)
-            }
+            summaryMarksAvailable: parseInt(element.attributes.available),
+            summaryMarksObtained: parseInt(element.attributes.obtained)
         };
     }
 
@@ -103,8 +129,8 @@ function extractMcqTestResult(mcqResult) {
             verifiedResult = result.lastName ? true : false;
             verifiedResult = result.studentNumber ? true : false;
             verifiedResult = result.testId ? true : false;
-            verifiedResult = result.summaryMarks.available ? true : false;
-            verifiedResult = result.summaryMarks.obtained ? true : false;
+            verifiedResult = result.summaryMarksAvailable ? true : false;
+            verifiedResult = result.summaryMarksObtained ? true : false;
         } catch (e) {
             verifiedResult = false;
         }
