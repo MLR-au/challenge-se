@@ -67,7 +67,7 @@ const wellFormedDocument = `
 `;
 
 describe('verify xml import route working as expected', () => {
-    it('should be able to process a well formed document', () => {
+    it('should be able to process a well formed result', () => {
         const doc = convertToJS(wellFormedResult);
         let result = extractMcqTestResult(doc.elements[0]);
 
@@ -75,14 +75,14 @@ describe('verify xml import route working as expected', () => {
         expect(result.lastName).to.equal('Alysander');
         expect(result.studentNumber).to.equal('002299');
         expect(result.testId).to.equal('9863');
-        expect(result.summaryMarks.obtained).to.equal(1);
+        expect(result.summaryMarksObtained).to.equal(1);
     });
-    it('should fail on a document with an incorrect root element', () => {
+    it('should fail on a result with an incorrect root element', () => {
         const doc = convertToJS(notWellFormedResult);
         let result = extractMcqTestResult(doc.elements[0]);
         expect(result).to.equal(undefined);
     });
-    it('should fail on a document with missing fields', () => {
+    it('should fail on a result with missing fields', () => {
         const doc = convertToJS(resultWithDataMissing);
         let result = extractMcqTestResult(doc.elements[0]);
         expect(result).to.equal(null);
