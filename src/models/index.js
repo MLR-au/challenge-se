@@ -12,7 +12,8 @@ const password = process.env.DB_PASS || 'markr';
 
 const sequelize = new Sequelize(database, username, password, {
     dialect: 'sqlite',
-    storage: 'data.sqlite'
+    storage: 'data.sqlite',
+    logging: false
 });
 
 fs
