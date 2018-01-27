@@ -44,3 +44,6 @@ Thumbs.db
 src/assets/data
 
 .yarn-error.log
+
+data.sqlite
+
