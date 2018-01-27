@@ -1,0 +1,11 @@
+{
+  "name": "markr",
+  "version": "1.0.0",
+  "description": "Marking as a service Micro-Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marco La Rosa",
+  "license": "ISC"
+}
