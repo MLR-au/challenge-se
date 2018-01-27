@@ -12,8 +12,8 @@ const {
     extractMcqTestResult
 } = require('src/controllers/ingest');
 
-describe('verify xml import route working as expected', () => {
-	afterEach(() => {
+describe('verify xml import route handlers working as expected', () => {
+	beforeEach(() => {
 		return models.result.destroy({ where: {}});
 	})
 
