@@ -15,6 +15,7 @@ function processMarkedDataCtrl(xmlData) {
     const doc = convertToJS(xmlData);
     if (doc.elements) {
         let results = extractMcqTestResults(doc.elements);
+        return results;
     }
 }
 
@@ -25,16 +26,27 @@ function convertToJS(xmlData) {
 function extractMcqTestResults(mcqResults) {
     const processedResults = mcqResults.map(result => {
         if (result.name !== 'mcq-test-results') {
+            console.log(
+                'Unable to process the submitted document - root element not "mcq-test-results"'
+            );
             return;
         }
         return result.elements.map(result => {
             return extractMcqTestResult(result);
         });
     });
+    return lodash.flattenDeep(processedResults);
 }
 
 function extractMcqTestResult(mcqResult) {
     if (mcqResult.name !== 'mcq-test-result') {
+        console.log(
+            `Unable to process this result - root element not "mcq-test-result": ${JSON.stringify(
+                mcqResult,
+                null,
+                2
+            )}`
+        );
         return;
     }
     mcqResult = mcqResult.elements.map(element => {
@@ -86,12 +98,21 @@ function extractMcqTestResult(mcqResult) {
 
     function verifyResult(result) {
         let verifiedResult = true;
-        verifiedResult = result.firstName ? true : false;
-        verifiedResult = result.lastName ? true : false;
-        verifiedResult = result.studentNumber ? true : false;
-        verifiedResult = result.testId ? true : false;
-        verifiedResult = result.summaryMarks.available ? true : false;
-        verifiedResult = result.summaryMarks.obtained ? true : false;
+        try {
+            verifiedResult = result.firstName ? true : false;
+            verifiedResult = result.lastName ? true : false;
+            verifiedResult = result.studentNumber ? true : false;
+            verifiedResult = result.testId ? true : false;
+            verifiedResult = result.summaryMarks.available ? true : false;
+            verifiedResult = result.summaryMarks.obtained ? true : false;
+        } catch (e) {
+            verifiedResult = false;
+        }
+        if (!verifiedResult) {
+            console.log(
+                `Unable to process: ${JSON.stringify(result, null, 2)}`
+            );
+        }
         return verifiedResult ? result : null;
     }
 }
