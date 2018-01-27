@@ -8,6 +8,7 @@ const models = require('src/models');
 module.exports = {
     processMarkedDataCtrl,
     convertToJS,
+    createOrUpdateResultRecord,
     extractMcqTestResult,
     extractMcqTestResults
 };
@@ -44,7 +45,8 @@ function createOrUpdateResultRecord(newResult) {
                 update.summaryMarksObtained = newResult.summaryMarksObtained;
             }
             return oldResult.update(update);
-        });
+        })
+        .then(result => result.get());
 }
 
 function convertToJS(xmlData) {
