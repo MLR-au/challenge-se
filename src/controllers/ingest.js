@@ -17,7 +17,8 @@ function processMarkedDataCtrl(xmlData) {
     const doc = convertToJS(xmlData);
     if (doc.elements) {
         let results = extractMcqTestResults(doc.elements);
-        return results.map(result => createOrUpdateResultRecord(result));
+        results.map(result => createOrUpdateResultRecord(result));
+        return Promise.resolve();
     }
 }
 

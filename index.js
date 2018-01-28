@@ -36,7 +36,7 @@ function wireUpMiddleware(app) {
 function wireUpRoutes(app) {
     app.post('/import', routeHandlers.post.ingest.processMarkedData);
     app.get(
-        '/results/:test-id/aggregate',
+        '/results/:testId/aggregate',
         routeHandlers.get.results.getAggregateResults
     );
 }
