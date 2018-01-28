@@ -42,7 +42,7 @@ Thumbs.db
 
 src/assets/data
 
-.yarn-error.log
+yarn-error.log
 
 data.sqlite
 
