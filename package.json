@@ -14,6 +14,7 @@
     "license": "ISC",
     "dependencies": {
         "app-module-path": "^2.2.0",
+        "body-parser": "^1.18.2",
         "change-case": "^3.0.1",
         "express": "^4.16.2",
         "lodash": "^4.17.4",

@@ -3,6 +3,7 @@ require('app-module-path').addPath(`${__dirname}`);
 const express = require('express');
 const models = require('./src/models');
 const routeHandlers = require('./src/routeHandlers');
+const bodyParser = require('body-parser');
 
 return createApp().then(app => {
     return app.listen(3000, () =>
@@ -17,12 +18,19 @@ function createApp() {
         .then(() => {
             console.log('DB connection has been established successfully.');
             const app = express();
+            wireUpMiddleware(app);
             wireUpRoutes(app);
             return app;
         })
         .catch(e => {
             // console.log(e);
         });
+}
+
+function wireUpMiddleware(app) {
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(bodyParser.text({type: 'text/xml+markr'}));
+    app.use(bodyParser.json());
 }
 
 function wireUpRoutes(app) {
