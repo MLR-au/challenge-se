@@ -7,6 +7,20 @@ This is a small micro-service with two endpoints:
 * POST /import - accepts XML string blobs for ingestion
 * GET /results/:testId/aggregate - return some simple stats for the given testId
 
+When students have completed their multiple choice exam the papers are fed in to a legacy machine which reads and grades the papers before creating an XML document containing a set of results. These results are then POST'ed to `this` microservice at the endpoint `/import`.
+
+Simple aggregate data for each test can be obtained by doing a GET to `/results/:testId/aggregate` where testId is the numeric test identifier. The service will then return a simple response like:
+
+```
+{
+    mean: 10.5,
+    count: 2,
+    p25: 8,
+    p50: 8,
+    p75: 13
+}
+```
+
 ## Design
 
 The high level units are `e2e` (integration tests), `src` (the source code - duh!), and `unit-tests` (can you guess what lives here?).
