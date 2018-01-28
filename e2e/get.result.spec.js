@@ -20,7 +20,7 @@ describe('verify aggregate get route working as expected', () => {
         });
     });
 
-    it('should get a successful response from the get endpoint', () => {
+    it('should get a 200 response from the get endpoint', () => {
         let url = 'http://localhost:3000/results/9863/aggregate';
         return chakram.get(url).then(resp => {
             expect(resp.response.statusCode).to.equal(200);
@@ -30,7 +30,7 @@ describe('verify aggregate get route working as expected', () => {
         });
     });
 
-    it('should get an error response from the get endpoint', () => {
+    it('should get a 403 response from the get endpoint', () => {
         let url = 'http://localhost:3000/results/2000/aggregate';
         return chakram.get(url).then(resp => {
             expect(resp.response.statusCode).to.equal(404);

@@ -23,7 +23,8 @@ function createApp() {
             return app;
         })
         .catch(e => {
-            // console.log(e);
+            console.log("Couldn't initialise application.");
+            process.exit(-1);
         });
 }
 

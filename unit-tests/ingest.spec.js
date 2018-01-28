@@ -1,21 +1,22 @@
 'use strict';
 
-const chakram = require('chakram');
-const expect = chakram.expect;
+const chai = require('chai');
+const expect = chai.expect;
+const assert = chai.assert;
 const models = require('src/models');
 
 const {
     processMarkedDataCtrl,
     convertToJS,
-	createOrUpdateResultRecord,
+    createOrUpdateResultRecord,
     extractMcqTestResults,
     extractMcqTestResult
 } = require('src/controllers/ingest');
 
 describe('verify xml import route handlers working as expected', () => {
-	beforeEach(() => {
-		return models.result.destroy({ where: {}});
-	})
+    beforeEach(() => {
+        return models.result.destroy({where: {}});
+    });
 
     it('should be able to process a well formed result', () => {
         const doc = convertToJS(getTestData().wellFormedResult);
@@ -29,8 +30,13 @@ describe('verify xml import route handlers working as expected', () => {
     });
     it('should ignore a result with an incorrect root element', () => {
         const doc = convertToJS(getTestData().notWellFormedResult);
-        let result = extractMcqTestResult(doc.elements[0]);
-        expect(result).to.equal(undefined);
+        expect(failingFunction).to.throw(
+            'Unable to process this result - root element not "mcq-test-result"'
+        );
+
+        function failingFunction() {
+            extractMcqTestResult(doc.elements[0]);
+        }
     });
     it('should report a result with missing fields', () => {
         const doc = convertToJS(getTestData().resultWithDataMissing);
@@ -38,49 +44,45 @@ describe('verify xml import route handlers working as expected', () => {
         expect(result).to.equal(null);
     });
     it('should be able to process a well formed document', () => {
-        const results = processMarkedDataCtrl(getTestData().wellFormedDocument);
-        expect(results.length).to.equal(1);
+        processMarkedDataCtrl(getTestData().wellFormedDocument);
     });
-	it('should override a previous lower result', () => {
-		let doc = convertToJS(getTestData().wellFormedResult);
-		let result = extractMcqTestResult(doc.elements[0]);
-		return createOrUpdateResultRecord(result)
-		.then(result => {
-			expect(result.summaryMarksObtained).to.equal(1);
-			return Promise.resolve();
-		})
-		.then(() => {
-			doc = convertToJS(getTestData().duplicateWellFormedResult);
-			result = extractMcqTestResult(doc.elements[0]);
-			return createOrUpdateResultRecord(result);
-		})
-		.then(result => {
-			expect(result.summaryMarksObtained).to.equal(2);
-		});
-	})
-	it('should not override a previous higher result', () => {
-		let doc = convertToJS(getTestData().duplicateWellFormedResult);
-		let result = extractMcqTestResult(doc.elements[0]);
-		return createOrUpdateResultRecord(result)
-		.then(result => {
-			expect(result.summaryMarksObtained).to.equal(2);
-			return Promise.resolve();
-		})
-		.then(() => {
-			doc = convertToJS(getTestData().wellFormedResult);
-			result = extractMcqTestResult(doc.elements[0]);
-			return createOrUpdateResultRecord(result);
-		})
-		.then(result => {
-			expect(result.summaryMarksObtained).to.equal(2);
-		});
-	})
-
+    it('should override a previous lower result', () => {
+        let doc = convertToJS(getTestData().wellFormedResult);
+        let result = extractMcqTestResult(doc.elements[0]);
+        return createOrUpdateResultRecord(result)
+            .then(result => {
+                expect(result.summaryMarksObtained).to.equal(1);
+                return Promise.resolve();
+            })
+            .then(() => {
+                doc = convertToJS(getTestData().duplicateWellFormedResult);
+                result = extractMcqTestResult(doc.elements[0]);
+                return createOrUpdateResultRecord(result);
+            })
+            .then(result => {
+                expect(result.summaryMarksObtained).to.equal(2);
+            });
+    });
+    it('should not override a previous higher result', () => {
+        let doc = convertToJS(getTestData().duplicateWellFormedResult);
+        let result = extractMcqTestResult(doc.elements[0]);
+        return createOrUpdateResultRecord(result)
+            .then(result => {
+                expect(result.summaryMarksObtained).to.equal(2);
+                return Promise.resolve();
+            })
+            .then(() => {
+                doc = convertToJS(getTestData().wellFormedResult);
+                result = extractMcqTestResult(doc.elements[0]);
+                return createOrUpdateResultRecord(result);
+            })
+            .then(result => {
+                expect(result.summaryMarksObtained).to.equal(2);
+            });
+    });
 });
 
-
 function getTestData() {
-
     return {
         wellFormedResult: `
             <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
@@ -93,7 +95,7 @@ function getTestData() {
                 <summary-marks available="2" obtained="1" />
             </mcq-test-result>
         `,
-		duplicateWellFormedResult: `
+        duplicateWellFormedResult: `
 			<mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
 				<first-name>KJ</first-name>
 				<last-name>Alysander</last-name>
@@ -104,18 +106,18 @@ function getTestData() {
 				<summary-marks available="2" obtained="2" />
 			</mcq-test-result>
 		`,
-		notWellFormedResult: `
+        notWellFormedResult: `
 			<mcq-testing-result scanned-on="2017-12-04T12:12:10+11:00">
 			</mcq-testing-result>
 		`,
-		resultWithDataMissing: `
+        resultWithDataMissing: `
 			<mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
 				<first-name>KJ</first-name>
 				<last-name>Alysander</last-name>
 				<student-number>002299</student-number>
 			</mcq-test-result>
 		`,
-		wellFormedDocument: `
+        wellFormedDocument: `
 			<mcq-test-results>
 				<mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
 					<first-name>KJ</first-name>
@@ -146,5 +148,5 @@ function getTestData() {
 				</mcq-test-result>
 			</mcq-test-results>
 		`
-    }
+    };
 }

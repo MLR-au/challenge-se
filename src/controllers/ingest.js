@@ -57,10 +57,9 @@ function convertToJS(xmlData) {
 function extractMcqTestResults(mcqResults) {
     const processedResults = mcqResults.map(result => {
         if (result.name !== 'mcq-test-results') {
-            console.log(
+            throw new Error(
                 'Unable to process the submitted document - root element not "mcq-test-results"'
             );
-            return;
         }
         return result.elements.map(result => {
             return extractMcqTestResult(result);
@@ -71,14 +70,9 @@ function extractMcqTestResults(mcqResults) {
 
 function extractMcqTestResult(mcqResult) {
     if (mcqResult.name !== 'mcq-test-result') {
-        console.log(
-            `Unable to process this result - root element not "mcq-test-result": ${JSON.stringify(
-                mcqResult,
-                null,
-                2
-            )}`
+        throw new Error(
+            `Unable to process this result - root element not "mcq-test-result"'`
         );
-        return;
     }
     mcqResult = mcqResult.elements.map(element => {
         switch (element.name) {

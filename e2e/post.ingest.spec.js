@@ -2,7 +2,7 @@ const chakram = require('chakram');
 const expect = chakram.expect;
 
 describe('verify xml import route working as expected', () => {
-    it('should get a successful response from the import endpoint', () => {
+    it('should get a 200 response from the import endpoint', () => {
         let url = 'http://localhost:3000/import';
         return chakram
             .post(url, getTestData().wellFormedDocument, {
@@ -16,10 +16,10 @@ describe('verify xml import route working as expected', () => {
             });
     });
 
-    it('should get an error response from the import endpoint', () => {
+    it('should get a 403 response from the import endpoint', () => {
         let url = 'http://localhost:3000/import';
         return chakram
-            .post(url, getTestData().wellFormedDocument, {
+            .post(url, getTestData().notWellFormedDocument, {
                 json: false,
                 headers: {
                     'content-type': 'text/json'
@@ -29,7 +29,22 @@ describe('verify xml import route working as expected', () => {
                 expect(resp.response.statusCode).to.equal(403);
             });
     });
+
+    it('should get a 400 response from the import endpoint', () => {
+        let url = 'http://localhost:3000/import';
+        return chakram
+            .post(url, getTestData().notWellFormedDocument, {
+                json: false,
+                headers: {
+                    'content-type': 'text/xml+markr'
+                }
+            })
+            .then(resp => {
+                expect(resp.response.statusCode).to.equal(400);
+            });
+    });
 });
+
 function getTestData() {
     return {
         wellFormedDocument: `
@@ -88,6 +103,23 @@ function getTestData() {
 					<answer question="19" marks-available="1" marks-awarded="1">D</answer>
 					<summary-marks available="20" obtained="8" />
 				</mcq-test-result>
+			</mcq-test-results>
+		`,
+        notWellFormedDocument: `
+			<mcq-test-results>
+                <mcq-test scanned-on="2017-12-04T12:13:10+11:00">
+                    <first-name>KJ</first-name>
+                    <last-name>Jim</last-name>
+                    <student-number>2300</student-number>
+                    <test-id>9863</test-id>
+                    <answer question="14" marks-available="1" marks-awarded="1">B</answer>
+                    <answer question="15" marks-available="1" marks-awarded="0">C</answer>
+                    <answer question="16" marks-available="1" marks-awarded="1">C</answer>
+                    <answer question="17" marks-available="1" marks-awarded="1">A</answer>
+                    <answer question="18" marks-available="1" marks-awarded="1">C</answer>
+                    <answer question="19" marks-available="1" marks-awarded="1">D</answer>
+                    <summary-marks available="20" obtained="8" />
+                </mcq-test>
 			</mcq-test-results>
 		`
     };
