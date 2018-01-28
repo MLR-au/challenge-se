@@ -1,9 +1,15 @@
 'use strict';
 
+const {processMarkedDataCtrl} = require('src/controllers/ingest');
+
 module.exports = {
     processMarkedData
 };
 
 function processMarkedData(req, res, next) {
-    return res.send(200);
+    if (req.headers['content-type'] !== 'text/xml+markr') {
+        return res.status(403).send('Unable to process this type of request.');
+    }
+    processMarkedDataCtrl(req.body);
+    return res.sendStatus(200);
 }
